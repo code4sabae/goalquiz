@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,user-scalable=no">
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>SDGs GOALQUIZ / ゴールクイズ</title>
 <meta property="og:title" content="SDGs GOALQUIZ / ゴールクイズ">
 <meta name="twitter:card" content="summary_large_image">
@@ -68,12 +68,9 @@ import {} from "https://code4sabae.github.io/leaflet-mjs/qr-code.mjs";
 window.onload = async () => {
     const baseurl = "https://code4sabae.github.io/SDGs_ja/";
     const goals = CSV.toJSON(await CSV.fetch(baseurl + "SDG-goals.csv"));
-    console.log(goals);
     const targets = CSV.toJSON(await CSV.fetch(baseurl + "SDG-targets.csv"));
-    console.log(targets);
 
     const body = document.body;
-
     add(body, "h1", "SDGs " + lang("ゴールクイズ", "GOALQUIZ"));
     const result = add(body, "div");
     result.className = "result";
@@ -108,7 +105,6 @@ window.onload = async () => {
         quiz.style.color = "black";
         const target = targets[i];
         const goal = goals[target.goal - 1];
-        //console.log(target);
         const desc = lang("description_ja", "description");
         const title = lang("title_ja", "title");
         const tid = startShowText(quiz, target[desc], lang(50, 25));
@@ -168,7 +164,6 @@ const startShowText = (div, text, waitms) => {
         }
     }, waitms);
 };
-
 const add = (parent, tag, txt, link) => {
     const ele = (() => {
         if (tag.indexOf("-") < 0) {
