@@ -62,6 +62,7 @@ a {
 import { CSV } from "https://code4sabae.github.io/js/CSV.js";
 import { shuffle } from "https://code4sabae.github.io/js/shuffle.js";
 import { sleep } from "https://code4sabae.github.io/js/sleep.js";
+import {} from "https://code4sabae.github.io/leaflet-mjs/qr-code.mjs";
 
 window.onload = async () => {
     const baseurl = "https://code4sabae.github.io/SDGs_ja/";
@@ -96,7 +97,8 @@ window.onload = async () => {
     add(credit, "span", "Japanese", "#ja");
     add(credit, "span", " / ");
     add(credit, "span", "English", "#en");
-
+    add(body, "qr-code");
+    
     shuffle(targets);
     let point = 0;
     for (let i = 0; i < targets.length; i++) {
@@ -167,7 +169,13 @@ const startShowText = (div, text, waitms) => {
 };
 
 const add = (parent, tag, txt, link) => {
-    const ele = document.createElement(tag);
+    const ele = (() => {
+        if (tag.indexOf("-") < 0) {
+            return document.createElement(tag);
+        } else {
+            return new (customElements.get(tag))();
+        }
+    })();
     if (txt) {
         if (link) {
             const a = add(ele, "a", txt);
