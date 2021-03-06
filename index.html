@@ -162,7 +162,7 @@ const waitClick = async (sels) => {
 const startShowText = (div, text, waitms) => {
     let n = 1;
     return setInterval(() => {
-        if (n < text.length) {
+        if (n <= text.length) {
             div.textContent = text.substring(0, n);
             n++;
         }
