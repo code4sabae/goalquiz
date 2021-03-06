@@ -1,0 +1,65 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<style>
+img {
+    width: 5vw;
+}
+</style>
+<script type="module">
+import { CSV } from "https://code4sabae.github.io/js/CSV.js";
+
+const pickColorFromImage = (img) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const g = canvas.getContext("2d");
+    g.drawImage(img, 0, 0);
+    const c = g.getImageData(0, 0, 1, 1).data;
+    const hex2 = n => n < 16 ? "0" + n.toString(16) : "" + n.toString(16);
+    return "#" + hex2(c[0]) + hex2(c[1]) + hex2(c[2]);
+};
+const waitImageLoad = async (img) => {
+    return new Promise(resolve => img.onload = resolve);
+};
+
+window.onload = async () => {
+    const baseurl = "https://code4sabae.github.io/SDGs_ja/";
+    const goals = CSV.toJSON(await CSV.fetch(baseurl + "SDG-goals.csv"));
+    console.log(goals);
+    const targets = CSV.toJSON(await CSV.fetch(baseurl + "SDG-targets.csv"));
+    console.log(targets);
+
+    const logos = add(document.body, "div");
+    const colors = [];
+    for (const goal of goals) {
+        const img = new Image();
+        //img.src = baseurl + goal.logo_ja;
+        img.src = goal.logo_ja;
+        //img.src = baseurl + goal.logo;
+        logos.appendChild(img);
+        await waitImageLoad(img);
+        const color = pickColorFromImage(img);
+        colors.push(color);
+    }
+    console.log(colors.join("\n"))
+};
+
+const add = (parent, tag, txt, link) => {
+    const ele = document.createElement(tag);
+    if (txt) {
+        if (link) {
+            const a = add(ele, "a", txt);
+            a.href = link;
+        } else {
+            ele.textContent = txt;
+        }
+    }
+    parent.appendChild(ele);
+    return ele;
+};
+
+</script>
+</head>
+<body>
+</body>
+</html>
+
