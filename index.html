@@ -116,16 +116,20 @@ window.onload = async () => {
         quiz.style.backgroundColor = goal.color;
         quiz.style.color = "white";
         if (ans == target.goal) {
-            quiz.innerHTML += "<br>" + lang("正解！", "Correct!");
             point++;
-        } else {
-            quiz.innerHTML += "<br>" + lang("まちがい！ 正解は ", "Wrong.. Correct answer is ") + target.goal + " 「" + goal[title] + "」";
         }
         result.textContent = lang(
             (i + 1) + "問中" + point + "問正解 正解率" + (point / (i + 1) * 100).toFixed(1) + "%",
             "Q cnt " + (i + 1) + ", Corrects " + point + ", Rate " + (point / (i + 1) * 100).toFixed(1) + "%"
         );
-        await sleep(1000);
+        if (ans == target.goal) {
+            quiz.innerHTML += "<br>" + lang("正解！", "Correct!");
+            await sleep(1000);
+        } else {
+            quiz.innerHTML += "<br>" + lang("まちがい！ 正解は ", "Wrong.. Correct answer is ") + target.goal + " 「" + goal[title] + "」";
+            quiz.innerHTML += "<br>" + lang("正解をタップして次の問題へ", "Go to click the correct answer.");
+            while (await waitClick(sels) + 1 != target.goal);
+        }
     }
     alert(lang("おめでとうございます！全169ターゲットのクイズを終えました！", "Congratulations!! You've finished quiz of 169 targets."))
 };
@@ -146,11 +150,17 @@ const getLang = () => {
 };
 const waitClick = async (sels) => {
     return new Promise(resolve => {
-        for (let i = 0; i < sels.length; i++) {
-            const sel = sels[i];
-            sel.wcid = i;
-            sel.onclick = function() {
-                resolve(this.wcid);
+        if (Array.isArray(sels)) {
+            for (let i = 0; i < sels.length; i++) {
+                const sel = sels[i];
+                sel.wcid = i;
+                sel.onclick = function() {
+                    resolve(this.wcid);
+                };
+            }
+        } else {
+            sels.onclick = function() {
+                resolve();
             };
         }
     });
@@ -176,6 +186,12 @@ const add = (parent, tag, txt, link) => {
         if (link) {
             const a = add(ele, "a", txt);
             a.href = link;
+            if (link.startsWith("#")) {
+                a.onclick = () => {
+                    location.href = a.href;
+                    location.reload();
+                };
+            }
         } else {
             ele.textContent = txt;
         }
